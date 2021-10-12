@@ -1,0 +1,1 @@
+This repository contains scripts used to automatically add and remove plugins from the Cumdump via CI.
