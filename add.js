@@ -40,12 +40,6 @@
         JSON.stringify(pluginJson.body)
       );
 
-      let add = await exec("git add --all");
-
-      if (add.stderr) {
-        throw new Error(add.stderr);
-      }
-
       const pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
       pluginsLarge[pluginPath] = pluginJson.body;
       await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
@@ -53,6 +47,11 @@
       const plugins = JSON.parse(await fs.readFile("plugins.json"));
       plugins.push(pluginPath);
       await fs.writeFile("plugins.json", JSON.stringify(plugins));
+
+      let add = await exec("git add --all");
+      if (add.stderr) {
+        throw new Error(add.stderr);
+      }
 
       let commit = await exec(`git commit -m "[CI] Modified ${pluginURL}"`);
       if (commit.stderr) {
