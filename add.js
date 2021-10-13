@@ -42,7 +42,7 @@
       await fs.writeFile(path.join(pluginPath, "plugin.js"), pluginObj.body);
       await fs.writeFile(
         path.join(pluginPath, "plugin.json"),
-        JSON.stringify(pluginJson)
+        JSON.stringify(pluginManifest)
       );
 
       const pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
