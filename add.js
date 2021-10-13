@@ -21,15 +21,20 @@
       console.log(`Adding ${pluginURL} to plugins...`);
 
       let pluginObj = await fetch(`${pluginURL}/plugin.js`);
-      if (pluginObj.statusCode != 200) {
+      if (pluginObj.status != 200) {
         throw new Error(`${pluginURL} returned ${pluginURL.statusCode}`);
       }
 
       let pluginJson = await fetch(`${pluginURL}/plugin.json`);
-      if (pluginJson.statusCode != 200) {
+      if (pluginJson.status != 200) {
         throw new Error(`${pluginURL} returned ${pluginURL.statusCode}`);
-      } else if (typeof pluginJson.body != "object") {
-        throw new Error(`${pluginURL}/plugin.json is not a valid json`);
+      }
+
+      let pluginManifest;
+      try {
+        pluginManifest = JSON.parse(pluginJson.body);
+      } catch {
+        throw new Error(`${pluginURL}/plugin.json is not valid JSON`);
       }
 
       await fs.mkdir(pluginPath, { recursive: true });
@@ -37,16 +42,16 @@
       await fs.writeFile(path.join(pluginPath, "plugin.js"), pluginObj.body);
       await fs.writeFile(
         path.join(pluginPath, "plugin.json"),
-        JSON.stringify(pluginJson.body)
+        JSON.stringify(pluginJson)
       );
 
       const pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
-      pluginsLarge[pluginPath] = pluginJson.body;
+      pluginsLarge[pluginPath] = pluginManifest;
       await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
 
       const plugins = JSON.parse(await fs.readFile("plugins.json"));
       plugins.push(pluginPath);
-      await fs.writeFile("plugins.json", JSON.stringify(plugins));
+      await fs.writeFile("plugins.json", JSON.stringify([...new Set(plugins)]));
 
       let add = await exec("git add --all");
       if (add.stderr) {
