@@ -33,7 +33,7 @@
       let pluginManifest;
       try {
         pluginManifest = JSON.parse(pluginJson.body);
-        pluginManifest.url = pluginURL;
+        pluginManifest.url = pluginPath;
       } catch {
         throw new Error(`${pluginURL}/plugin.json is not valid JSON`);
       }
