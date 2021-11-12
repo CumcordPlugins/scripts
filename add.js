@@ -46,12 +46,17 @@
         JSON.stringify(pluginManifest)
       );
 
-      const pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
-      pluginsLarge.push(pluginManifest);
-      await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
+      let pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
+      let plugins = JSON.parse(await fs.readFile("plugins.json"));
 
-      const plugins = JSON.parse(await fs.readFile("plugins.json"));
-      plugins.push(pluginPath);
+      const indexL = pluginsLarge.findIndex((p) => p.url == pluginPath);
+      if (indexL === -1) pluginsLarge.push(pluginManifest);
+      else pluginsLarge[indexL] = pluginManifest;
+
+      if (plugins.findIndex((p) => p == pluginPath) === -1)
+        plugins.push(pluginPath);
+
+      await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
       await fs.writeFile("plugins.json", JSON.stringify([...new Set(plugins)]));
 
       let add = await exec("git add --all");
