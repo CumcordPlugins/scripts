@@ -33,6 +33,7 @@
       let pluginManifest;
       try {
         pluginManifest = JSON.parse(pluginJson.body);
+        pluginManifest.url = pluginURL;
       } catch {
         throw new Error(`${pluginURL}/plugin.json is not valid JSON`);
       }
@@ -46,7 +47,7 @@
       );
 
       const pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
-      pluginsLarge[pluginPath] = pluginManifest;
+      pluginsLarge.push(pluginManifest);
       await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
 
       const plugins = JSON.parse(await fs.readFile("plugins.json"));
