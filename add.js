@@ -53,8 +53,7 @@
       if (indexL === -1) pluginsLarge.push(pluginManifest);
       else pluginsLarge[indexL] = pluginManifest;
 
-      if (plugins.findIndex((p) => p == pluginPath) === -1)
-        plugins.push(pluginPath);
+      plugins.push(pluginPath);
 
       await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
       await fs.writeFile("plugins.json", JSON.stringify([...new Set(plugins)]));
