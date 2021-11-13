@@ -33,7 +33,7 @@
       let pluginManifest;
       try {
         pluginManifest = JSON.parse(pluginJson.body);
-        pluginManifest.url = pluginURL;
+        pluginManifest.url = pluginPath;
       } catch {
         throw new Error(`${pluginURL}/plugin.json is not valid JSON`);
       }
@@ -46,12 +46,16 @@
         JSON.stringify(pluginManifest)
       );
 
-      const pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
-      pluginsLarge.push(pluginManifest);
-      await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
+      let pluginsLarge = JSON.parse(await fs.readFile("plugins-large.json"));
+      let plugins = JSON.parse(await fs.readFile("plugins.json"));
 
-      const plugins = JSON.parse(await fs.readFile("plugins.json"));
+      const indexL = pluginsLarge.findIndex((p) => p.url == pluginPath);
+      if (indexL === -1) pluginsLarge.push(pluginManifest);
+      else pluginsLarge[indexL] = pluginManifest;
+
       plugins.push(pluginPath);
+
+      await fs.writeFile("plugins-large.json", JSON.stringify(pluginsLarge));
       await fs.writeFile("plugins.json", JSON.stringify([...new Set(plugins)]));
 
       let add = await exec("git add --all");
