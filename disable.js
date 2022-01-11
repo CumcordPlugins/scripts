@@ -19,7 +19,7 @@
       console.log(`Disabling ${pluginURL}...`);
 
 
-      let pluginManifest = require(path.join(pluginPath, "plugin.json"));
+      let pluginManifest = JSON.parse(await fs.readFile(path.join(pluginPath, "plugin.json")));
       pluginManifest.description = "This plugin has been temporarily disabled by the Cumdump staff as a result of it causing crashes."
       pluginManifest.hash = "37088a58903430ee841ef95985b29f5ed156a46097c79db7eb0f846a923a14d5"
       
