@@ -2,7 +2,8 @@
   try {
     const fs = require("fs").promises;
     const path = require("path");
-
+    let exec = require("util").promisify(require("child_process").exec);
+    
     let plugins = process.env.PLUGINS.split(" ").map((plugin) => {
       let parsed = new URL(plugin);
       let path = parsed.pathname.split("/").filter((p) => p.length > 0);
